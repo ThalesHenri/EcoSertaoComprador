@@ -9,7 +9,7 @@ class ApiSender:
     def addFormData(self,key,value):
         self.formData[key] = value
         
-    def sendPostRequest():
+    def sendPostRequest(self):
         response = requests.post(self.url, data=self.form_data)
         
         if response.status_code == 200:
@@ -23,4 +23,8 @@ class ApiSender:
             print("Status code:", response.status_code)
             print("Response:", response.text)
 
-    
+    def sendGetRequest(self):
+        response = requests.get(self.url)
+        json = response.json()
+        print(json)
+        

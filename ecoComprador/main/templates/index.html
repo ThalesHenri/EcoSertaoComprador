@@ -4,10 +4,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eco Sertão</title>
+    <title>EcoComprador</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
+
 </head>
 <body>
-    <h1 class="mensagem">hello everybody </h1>
+    <nav>
+        <ul>
+            <li><a href="#">Inicio</a></li>
+            <li><a href="#">Produtos</a></li>
+            <li><a href="#">Pedidos</a></li>
+            <li><a href="#">Suporte</a></li>
+        </ul>
+    </nav>
+    <div class="contentConteiner">
+        <div class="contentTitle">
+            <h1>Lista de Produtos</h1>
+        </div>
+        <div class="content">
+            {% block content %}
+                {% if is_empty %}
+                    <h3 class="msgERRO">Nenhum produto disponível.</h3>
+                {% else %}
+                    <ul>
+                        {% for produto in produtos %}
+                            <li>{{ produto.nome }} - {{ produto.marca }} -{{ produto.preco }}
+                                {% if produto.imagem %}
+                                    <img src="{{ imageUrl }}{{ produto.imagem }}" alt="{{ produto.name }}" class="productImage">
+                                {% else %}
+                                    <p>No image available</p>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endblock %}
+        </div>
+    </div>
 </body>
 </html>

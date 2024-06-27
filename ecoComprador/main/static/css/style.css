@@ -1,3 +1,42 @@
-.mensagem{
-    color: blue;
+body{
+    margin: 0;
+    font-family: "Inconsolata", monospace;
 }
+nav{
+    height: 50px;
+    padding: 10px;
+    background-color: black;
+    
+}
+nav ul{
+    display: flex;
+    gap: 25%;
+}
+nav ul a{
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+}
+nav ul a:hover{
+    text-decoration: underline;
+    transition: 2s;
+}
+ .contentConteiner{
+    margin-top: 100px;
+    background-color: purple;
+    height: fit-content;
+    
+ }
+
+ .contentTitle h1{
+    width: max-content;
+    position: relative; left: 40%;
+ }
+ .productImage{
+    height: 200px;
+ }
+ .msgERRO{
+    position: relative; left: 35%;
+    margin-top: 200px;
+    font-size: 3rem;
+ }
