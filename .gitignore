@@ -1,0 +1,10 @@
+
+#env folders that will be ignored
+bin/
+include/
+lib/
+lib64/
+pyvenv.cfg/
+
+
+
