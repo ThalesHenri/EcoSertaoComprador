@@ -8,4 +8,6 @@ TO DO LIST
 5>>>Descobrir como passar informação do formulario pra um script em django(V)
 6>>>Conceituar uma classe ApiSender(V)
 7>>>Testar  a Classe API sender (V)
-8>>>Criar Produtos atraves de um formuláro ()
+8>>>Estruturar a Pagina do formulario de criar produtos(V)
+9>>Estruturar as views da pagina de evento do formulário()
+10>>Criar Produtos atraves de um formuláro se comunicando com a api ()

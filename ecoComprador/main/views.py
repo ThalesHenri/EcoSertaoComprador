@@ -1,5 +1,6 @@
 from django.shortcuts import render
 import requests
+from .forms import ProdutoForm
 
 # Create your views here.
 
@@ -17,4 +18,11 @@ def homepage(response):
         'imageUrl' : imageBaseUrl
     }
     return render(response, 'index.html', context)
-    #return render(response ,'index.html')
+    
+    
+def cadastrarProduto(response):
+    form = ProdutoForm()
+    context ={
+        'form':form
+    }
+    return render(response,'cadastroProdutos.html',context)

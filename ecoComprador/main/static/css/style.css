@@ -50,7 +50,6 @@ nav ul a:hover {
     text-align: center;
     margin-top: 50px;
     font-size: 2rem;
-    color: red;
 }
 .productContainer {
     background-color: #f9f9f9;
@@ -101,4 +100,12 @@ nav ul a:hover {
 }
 .buyButton:hover {
     background-color: #45a049;
-}s
+}
+.produtoForm{
+    border: 2px solid;
+    display: block;
+    text-align: left;
+    font-size: 2rem;
+    padding: 50px;
+    
+}

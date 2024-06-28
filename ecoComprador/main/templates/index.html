@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoComprador</title>
+    <title>{% block pageTitle %}EcoComprador{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,13 +15,13 @@
         <ul>
             <li><a href="#">Inicio</a></li>
             <li><a href="#">Produtos</a></li>
-            <li><a href="#">Pedidos</a></li>
+            <li><a href="#">Quem Somos</a></li>
             <li><a href="#">Suporte</a></li>
         </ul>
     </nav>
     <div class="contentContainer">
         <div class="contentTitle">
-            <h1>Lista de Produtos</h1>
+            <h1>{% block contentTitle %}Lista de Produtos{% endblock %}</h1>
         </div>
         <div class="content">
             {% block content %}
