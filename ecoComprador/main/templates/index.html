@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
-
 </head>
 <body>
     <nav>
@@ -20,7 +19,7 @@
             <li><a href="#">Suporte</a></li>
         </ul>
     </nav>
-    <div class="contentConteiner">
+    <div class="contentContainer">
         <div class="contentTitle">
             <h1>Lista de Produtos</h1>
         </div>
@@ -29,17 +28,38 @@
                 {% if is_empty %}
                     <h3 class="msgERRO">Nenhum produto disponível.</h3>
                 {% else %}
-                    <ul>
-                        {% for produto in produtos %}
-                            <li>{{ produto.nome }} - {{ produto.marca }} -{{ produto.preco }}
-                                {% if produto.imagem %}
-                                    <img src="{{ imageUrl }}{{ produto.imagem }}" alt="{{ produto.name }}" class="productImage">
-                                {% else %}
-                                    <p>No image available</p>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
+                    {% for produto in produtos %}
+                        <div class="productContainer">
+                            <div class="productContent">
+                                <ul>
+                                    <li>
+                                        <div class="produtoNome"><h3>Nome => {{ produto.nome }}</h3></div>
+                                    </li>
+                                    <li>
+                                        <div class="produtoMarca"><h3>Marca => {{ produto.marca }}</h3></div>
+                                    </li>
+                                    <li>
+                                        <div class="produtoPreco"><h3>Preço => R${{ produto.preco }}</h3></div>
+                                    </li>
+                                    <li>
+                                        <div class="produtoDataValid"><h3>Validade =>  {{ produto.dataValid }}</h3></div>
+                                    </li>
+                                    <li>
+                                        <div class="produtoFrete"><h3>Frete =>  {{ produto.frete }}</h3></div>
+                                    </li>
+                                    <button class="buyButton">Compre Agora</button>
+                                </ul>
+                                
+                                <div class="productImageContainer">
+                                    {% if produto.imagem %}
+                                        <img src="{{ imageUrl }}{{ produto.imagem }}" alt="{{ produto.name }}" class="productImage">
+                                    {% else %}
+                                        <p>No image available</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 {% endif %}
             {% endblock %}
         </div>
