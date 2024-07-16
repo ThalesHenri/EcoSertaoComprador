@@ -12,6 +12,6 @@ TO DO LIST
 9>>Estruturar as views da pagina de evento do formulário(V)
 10>>Criar Produtos atraves de um formuláro se comunicando com a api (V)
 11>>Conceituar a Tela de Iniçio do site()
-12>>Atualizar os repositórios()
+12>>Atualizar os repositórios(V)
 13>>Conceituar a pagina sobre nós()
-14>>Debater sobre os casos de uso do fornecedor e sobre as paginas[suporte,quem somos...]()
+14>>Debater sobre os casos de uso do fornecedor[e comprador, dropdown em produtos] e sobre as paginas[suporte,quem somos...]()

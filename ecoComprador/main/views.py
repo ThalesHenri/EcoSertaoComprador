@@ -70,4 +70,7 @@ def cadastrarProdutoForm(response):
             return render(response, 'cadastroProdutos.html', {'form': form, 'error': 'Form data is invalid'})
     else:
         return HttpResponse("invalid request Method",status=405)
-    
+
+
+def quemSomos(response):
+    return render(response,'quemSomos.html')
