@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 import requests, json
-from .forms import ProdutoForm
-from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponse
+from .forms import ProdutoForm,LoginForm
+#from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse,JsonResponse
 
 # Create your views here.
 
@@ -56,7 +56,7 @@ def cadastrarProdutoForm(response):
             print("Data to send:", data)  # Debug print
             
             url = 'http://127.0.0.1:8081/api/produto/'
-            """for handling images, it will have to go like this, the data in request must be raw, the headers mus be empty on content, and the imagefile will beb on the beggining"""
+            """for handling images, it will have to go like this, the data in request must be raw, the headers must be empty on content, and the imagefile will be on the beggining"""
             request = requests.post(url=url, data=data,headers=headers,files=files)
             
             print("Response status code:", request.status_code)
@@ -74,3 +74,59 @@ def cadastrarProdutoForm(response):
 
 def quemSomos(response):
     return render(response,'quemSomos.html')
+
+
+def login(response):
+    form = LoginForm()
+    context ={
+        'form':form
+    }
+    return render(response,'login.html',context)
+
+
+def loginEvent(response):
+    if response.method == 'POST':
+        form = LoginForm(response.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            
+            data = {
+                'username':username,
+                'password':password
+            }
+            
+            headers = {}
+            url = 'http://127.0.0.1:8081/api/token/'
+            request = requests.post(url=url,data=data,headers=headers)
+            if request.status_code == 200:
+                tokens = request.json()
+                response.session['access'] = tokens['access']
+                response.session['refresh'] = tokens['refresh']
+                return redirect('userInfo')
+            else:
+                return render(response,'erroCred.html')
+            
+    else:
+        form = LoginForm() 
+        
+
+def userInfo(response):
+    token = response.session.get('access')
+    if not token:
+        return redirect('login')
+
+    request = requests.get('http://127.0.0.1:8081/api/protected/userdetail', headers={'Authorization': f'Bearer {token}'})
+    if request.status_code == 200:
+        userInfo = request.json()
+        return render(response,'userInfo.html',{'userInfo':userInfo}) #login succeded
+    elif request.status_code == 401:
+        refresh_token = response.session.get('refresh')
+        if refresh_token:
+            refresh_response = requests.post('http://127.0.0.1:8081/api/token/refresh/', data={'refresh': refresh_token})
+            if refresh_response.status_code == 200:
+                new_tokens = refresh_response.json()
+                response.session['access'] = new_tokens['access']
+                return userInfo(response)
+        return JsonResponse({'error': 'Token expired and refresh failed'}, status=401)
+    return JsonResponse({'error': 'Failed to retrieve user info'}, status=400)

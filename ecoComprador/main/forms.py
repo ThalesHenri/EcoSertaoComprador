@@ -15,4 +15,8 @@ class ProdutoForm(forms.ModelForm):
             'preco': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Preço'}),
             'imagem': forms.ClearableFileInput(attrs={'class': 'form-control'})
         }
-    imagem = forms.ImageField()
+        
+class LoginForm(forms.Form):
+    username = forms.CharField(label='Username',max_length=100)
+    password = forms.CharField(label='PassWord',widget=forms.PasswordInput)       
+

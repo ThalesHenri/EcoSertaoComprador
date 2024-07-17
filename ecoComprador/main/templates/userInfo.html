@@ -1,0 +1,14 @@
+{% extends "index.html" %}
+
+ {% block pageTitle %}EcoSertão{% endblock  %}
+ {% block contentTitle%}Informações do Usuário{% endblock %}
+ {% block content %}
+ <h1>User Info</h1>
+ {% if userInfo %}
+     <p>Username: {{ userInfo.username }}</p>
+     <p>Email: {{ userInfo.email }}</p>
+ {% else %}
+     <p>No user info available.</p>
+ {% endif %}
+ <a href="{% url 'login' %}">Log out</a>
+ {% endblock%}
