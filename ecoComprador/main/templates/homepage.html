@@ -1,0 +1,13 @@
+{% extends "index.html" %}
+
+ {% block pageTitle %}EcoSertão{% endblock  %}
+ {% block contentTitle%}Inicio{% endblock %}
+ {% block content %}
+    <h1> Vamos começar escolhendo o tipo de usuário.</h1>
+    <ul class="userSelect">
+        <a href="{% url 'cadastrarFornecedor' %}"><li><h2>Fornecedor</h2></li></a>
+        <a href="{% url 'cadastrarComprador' %}"><li><h2>Comprador</h2></li></a>
+    </ul>
+
+ {% endblock%}
+ 

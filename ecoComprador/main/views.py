@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 import requests, json
-from .forms import ProdutoForm,LoginForm
+from .forms import ProdutoForm,LoginForm,FornecedorForm,CompradorForm
 #from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse,JsonResponse
 
@@ -8,6 +8,10 @@ from django.http import HttpResponse,JsonResponse
 
 
 def homepage(response):
+    return render(response,'homepage.html')
+
+
+def mostrarProdutos(response):
     resposta = requests.get('http://127.0.0.1:8081/api/produto/')
     if resposta.status_code == 200:
         produtos = resposta.json()
@@ -130,3 +134,91 @@ def userInfo(response):
                 return userInfo(response)
         return JsonResponse({'error': 'Token expired and refresh failed'}, status=401)
     return JsonResponse({'error': 'Failed to retrieve user info'}, status=400)
+
+
+def cadastrarFornecedor(response):
+    form = FornecedorForm()
+    context ={
+        'form':form
+    }
+    return render(response,'cadastrarFornecedor.html',context)
+
+
+def cadastrarFornecedorForm(response):
+    if response.method == 'POST':
+        form = FornecedorForm(response.POST)
+        if form.is_valid():
+            
+            nome = form.cleaned_data['nome']
+            cnpj = form.cleaned_data['cnpj']
+            responsavel = form.cleaned_data['responsavel']
+            cpfResponsavel = form.cleaned_data['cpfResponsavel']
+            password = form.cleaned_data['password']
+            
+            
+            data = {
+                'nome':nome,
+                'cnpj':cnpj,
+                'responsavel':responsavel,
+                'cpfResponsavel':cpfResponsavel,
+                'password':password
+            }
+            
+            headers={}
+            url = 'http://127.0.0.1:8081/api/fornecedores/'
+            request = requests.post(data=data,headers=headers,url=url)
+            print("Response status code:", request.status_code)
+            if request.status_code == 201:
+                return render(response,'sucesso.html')
+            else:
+                print(request.text, request.status_code)
+                return HttpResponse('<h1>erro no envio para a API</h1>')
+        else:
+            # Handle invalid form case
+            return render(response, 'cadastrarFornecedor.html', {'form': form, 'error': 'Form data is invalid'})
+    else:
+        return HttpResponse("invalid request Method",status=405)
+                
+
+def cadastrarComprador(response):
+    form = CompradorForm()
+    context ={
+        'form':form
+    }
+    return render(response,'cadastrarComprador.html',context)
+
+
+def cadastrarCompradorForm(response):
+    if response.method == 'POST':
+        form = CompradorForm(response.POST)
+        if form.is_valid():
+            
+            nome = form.cleaned_data['nome']
+            cnpj = form.cleaned_data['cnpj']
+            responsavel = form.cleaned_data['responsavel']
+            cpfResponsavel = form.cleaned_data['cpfResponsavel']
+            password = form.cleaned_data['password']
+            
+            
+            data = {
+                'nome':nome,
+                'cnpj':cnpj,
+                'responsavel':responsavel,
+                'cpfResponsavel':cpfResponsavel,
+                'password':password
+            }
+            
+            headers={}
+            url = 'http://127.0.0.1:8081/api/compradores/'
+            request = requests.post(data=data,headers=headers,url=url)
+            print("Response status code:", request.status_code)
+            if request.status_code == 201:
+                return render(response,'sucesso.html')
+            else:
+                print(request.text, request.status_code)
+                return HttpResponse('<h1>erro no envio para a API</h1>')
+        else:
+            # Handle invalid form case
+            return render(response, 'cadastrarFornecedor.html', {'form': form, 'error': 'Form data is invalid'})
+    else:
+        return HttpResponse("invalid request Method",status=405)
