@@ -1,5 +1,7 @@
 from django import forms
 from .models import Produto,Fornecedor,Comprador
+from django.core.exceptions import ValidationError
+import re
 
 class ProdutoForm(forms.ModelForm):
     class Meta:
@@ -16,10 +18,20 @@ class ProdutoForm(forms.ModelForm):
             'imagem': forms.ClearableFileInput(attrs={'class': 'form-control'})
         }
         
-class LoginForm(forms.Form):
-    username = forms.CharField(label='Username',max_length=100)
-    password = forms.CharField(label='PassWord',widget=forms.PasswordInput)       
+def validate_cnpj(value):
+    if not re.match(r'^\d+$', value):
+        raise ValidationError('CNPJ must be numeric.')
 
+class LoginForm(forms.Form):
+    cnpj = forms.CharField(
+        label='CNPJ',
+        max_length=100,
+        validators=[validate_cnpj]
+    )
+    password = forms.CharField(
+        label='Senha',
+        widget=forms.PasswordInput
+    )
 
 class FornecedorForm(forms.ModelForm):
     class Meta:
