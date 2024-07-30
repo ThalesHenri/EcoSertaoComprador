@@ -91,49 +91,25 @@ def login(response):
 
 def loginEvent(request):
     if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            cnpj = form.cleaned_data.get('cnpj')
-            password = form.cleaned_data.get('password')
-            
-            if not cnpj or not password:
-                print(f"primeiro caso,{cnpj},{password}")
-                print(form.errors)
-                return render(request, 'erroCred.html', {'error': 'CNPJ and password are required'})
-                
-            
-            data = {
-                'cnpj': cnpj,  # Assuming 'username' maps to 'cnpj' for authentication
-                'password': password
-            }
-            
-            headers = {}
-            url = 'http://127.0.0.1:8081/api/login/'
-            response = requests.post(url=url, data=data, headers=headers)
-            
-            if response.status_code == 200:
-                tokens = response.json()
-                request.session['access'] = tokens['access']
-                request.session['refresh'] = tokens['refresh']
-                user_data = {'key': 'value', 'object': 'data'}
-                query_string = urlencode(user_data)
-                return redirect(f'/userInfo/?{query_string}')
-                
-            else:
-                print('caso 2')
-                return render(request, 'erroCred.html')
-
-        else:
-            print('caso3')
-            return render(request, 'erroCred.html', {'error': 'Invalid form submission'})
+        cnpj = request.POST['cnpj']
+        password = request.POST['password']
+        response = requests.post('http://127.0.0.1:8081/api/token/', data={'cnpj': cnpj, 'password': password})
         
+        if response.status_code == 200:
+            tokens = response.json()
+            request.session['access'] = tokens['access']
+            request.session['refresh'] = tokens['refresh']
+            return redirect('userInfo')
+        else:
+            return JsonResponse({'error': 'Invalid credentials'}, status=400)
     else:
         form = LoginForm()
-        print('caso4')
-        return render(request, 'login.html', {'form': form})
+    return render(request, 'login.html', {'form': form})
 
 def userInfo(request):
     token = request.session.get('access')
+    refresh_token = request.session.get('refresh')
+
     if not token:
         return redirect('login')
 
@@ -143,19 +119,32 @@ def userInfo(request):
 
     if response.status_code == 200:
         user_info = response.json()
+        print(user_info)
         return render(request, 'userInfo.html', {'userInfo': user_info})
-    elif response.status_code == 401:
-        refresh_token = request.session.get('refresh')
-        if refresh_token:
-            refresh_response = requests.post('http://127.0.0.1:8081/api/token/refresh/', data={'refresh': refresh_token})
-            if refresh_response.status_code == 200:
-                new_tokens = refresh_response.json()
-                request.session['access'] = new_tokens['access']
-                request.session['refresh'] = new_tokens['refresh']
-                # Retry fetching user info after refreshing tokens
-                return userInfo(request)
-        return JsonResponse({'error': 'Token expired and refresh failed'}, status=401)
-    return JsonResponse({'error': 'Failed to retrieve user info'}, status=400)
+    elif response.status_code == 401 and refresh_token:
+        # Token expired, attempt to refresh
+        refresh_response = requests.post('http://127.0.0.1:8081/api/token/refresh/', data={'refresh': refresh_token})
+
+        if refresh_response.status_code == 200:
+            new_tokens = refresh_response.json()
+            request.session['access'] = new_tokens['access']
+            request.session['refresh'] = new_tokens['refresh']
+            # Retry fetching user info after refreshing tokens
+            headers['Authorization'] = f'Bearer {new_tokens["access"]}'
+            response = requests.get(api_url, headers=headers)
+
+            if response.status_code == 200:
+                user_info = response.json()
+                print(user_info)
+                print(user_info.cnpj)
+                return render(request, 'userInfo.html', {'userInfo': user_info})
+            else:
+                return JsonResponse({'error': 'Failed to retrieve user info after token refresh'}, status=400)
+        else:
+            # Refresh token also expired or invalid
+            return JsonResponse({'error': 'Token expired and refresh failed'}, status=401)
+    else:
+        return JsonResponse({'error': 'Failed to retrieve user info'}, status=400)
 
 def cadastrarFornecedor(response):
     form = FornecedorForm()

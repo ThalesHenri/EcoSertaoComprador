@@ -5,8 +5,8 @@
  {% block content %}
  <h1>User Info</h1>
  {% if userInfo %}
-     <p>Username: {{ userInfo.username }}</p>
-     <p>Email: {{ userInfo.email }}</p>
+     <p>Username: {{ userInfo.nome }}</p>
+     <p>Cnpj: {{ userInfo.cnpj }}</p>
  {% else %}
      <p>No user info available.</p>
  {% endif %}
