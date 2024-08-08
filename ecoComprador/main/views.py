@@ -99,14 +99,38 @@ def loginEvent(request):
             tokens = response.json()
             request.session['access'] = tokens['access']
             request.session['refresh'] = tokens['refresh']
-            return redirect('userInfo')
+            return redirect('dashboard')
         else:
             return JsonResponse({'error': 'Invalid credentials'}, status=400)
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
-def userInfo(request):
+
+def logout(request):
+    # Fetch the refresh token from the session (assuming it is stored there)
+    refresh_token = request.session.get('refresh')  
+    
+    if not refresh_token:
+        return redirect('login')
+
+    API_BASE_URL = 'http://127.0.0.1:8081/api/'
+    response = requests.post(
+        f'{API_BASE_URL}logout/',
+        json={'refresh': refresh_token},  # Send refresh token in the request body
+        headers={'Authorization': f'Bearer {refresh_token}'}
+    )
+
+    if response.status_code == 205:
+        # Clear session and redirect to login
+        request.session.flush()
+        return redirect('login')
+    else:
+        # Handle errors if logout failed
+        return HttpResponse(f"Logout failed: {response.content.decode()}", status=response.status_code)
+    
+    
+def dashboard(request):
     token = request.session.get('access')
     refresh_token = request.session.get('refresh')
 
@@ -136,7 +160,6 @@ def userInfo(request):
             if response.status_code == 200:
                 user_info = response.json()
                 print(user_info)
-                print(user_info.cnpj)
                 return render(request, 'userInfo.html', {'userInfo': user_info})
             else:
                 return JsonResponse({'error': 'Failed to retrieve user info after token refresh'}, status=400)

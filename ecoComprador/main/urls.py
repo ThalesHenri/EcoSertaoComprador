@@ -15,6 +15,7 @@ urlpatterns = [
     path('quemSomos/',views.quemSomos,name='quemSomos'),
     path('login/',views.login,name='login'),
     path('login/event/',views.loginEvent,name='loginEvent'),
-    path('userInfo/',views.userInfo,name='userInfo'), 
+    path('logout/',views.logout,name='logout'),
+    path('dashboard/',views.dashboard,name='dashboard'), 
     
 ]
