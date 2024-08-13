@@ -13,7 +13,11 @@ def homepage(response):
 
 
 def mostrarProdutos(response):
-    resposta = requests.get('http://127.0.0.1:8081/api/produto/')
+    #token autorization
+    #need a erro handling
+    access = response.session['access'] 
+    headers = {'Authorization': f'Bearer {access}'}
+    resposta = requests.get(url='http://127.0.0.1:8081/api/produto/',headers=headers)
     if resposta.status_code == 200:
         produtos = resposta.json()
     else:
@@ -42,6 +46,10 @@ def cadastrarProdutoForm(response):
         
         if form.is_valid():
             
+            #token autorization
+            access = response.session['access'] 
+            
+            
             #hadling image upload
             imagem = response.FILES['imagem']
             data = {
@@ -56,7 +64,7 @@ def cadastrarProdutoForm(response):
             files = {
                 'imagem': ('imagem.jpg', imagem.file, 'image/jpeg')  # Example filename and content type
             }
-            headers = {}
+            headers = {'Authorization': f'Bearer {access}'}
             
             print("Data to send:", data)  # Debug print
             
@@ -118,7 +126,7 @@ def logout(request):
     response = requests.post(
         f'{API_BASE_URL}logout/',
         json={'refresh': refresh_token},  # Send refresh token in the request body
-        headers={'Authorization': f'Bearer {refresh_token}'}
+        # Removed the Authorization header
     )
 
     if response.status_code == 205:
@@ -128,7 +136,6 @@ def logout(request):
     else:
         # Handle errors if logout failed
         return HttpResponse(f"Logout failed: {response.content.decode()}", status=response.status_code)
-    
     
 def dashboard(request):
     token = request.session.get('access')
