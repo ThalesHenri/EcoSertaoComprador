@@ -13,21 +13,33 @@ def homepage(response):
 
 
 def mostrarProdutos(response):
-    #token autorization
-    #need a erro handling
-    access = response.session['access'] 
+
+    # Token authorization with error handling
+    try:
+        access = response.session['access']
+    except KeyError:
+        # If 'access' is not in session, redirect to an error page
+        return render(response, 'erroToken.html') 
+
     headers = {'Authorization': f'Bearer {access}'}
-    resposta = requests.get(url='http://127.0.0.1:8081/api/produto/',headers=headers)
-    if resposta.status_code == 200:
+    
+    try:
+        resposta = requests.get(url='http://127.0.0.1:8081/api/produto/', headers=headers)
+        resposta.raise_for_status()  # Raise an HTTPError if the HTTP request returned an unsuccessful status code
         produtos = resposta.json()
-    else:
+    except requests.exceptions.HTTPError:
         produtos = []
-    imageBaseUrl= 'http://127.0.0.1:8081'
+    except requests.exceptions.RequestException:
+        # Handle any other exceptions from the requests library
+        return render(response, 'erroRequest.html') 
+
+    imageBaseUrl = 'http://127.0.0.1:8081'
     context = {
         'produtos': produtos,
-        'is_empty': not produtos,  # Add an extra context variable to check if the list is empty
-        'imageUrl' : imageBaseUrl
+        'is_empty': not produtos,  # Check if the product list is empty
+        'imageUrl': imageBaseUrl
     }
+    
     return render(response, 'index.html', context)
     
     
@@ -41,16 +53,16 @@ def cadastrarProduto(response):
 
 def cadastrarProdutoForm(response):
     if response.method == 'POST':   
-        
         form = ProdutoForm(response.POST, response.FILES)
         
         if form.is_valid():
+            # Token authorization
+            try:
+                access = response.session['access'] 
+            except KeyError:
+                return render(response, 'erroToken.html')
             
-            #token autorization
-            access = response.session['access'] 
-            
-            
-            #hadling image upload
+            # Handling image upload
             imagem = response.FILES['imagem']
             data = {
                 'nome': form.cleaned_data['nome'],
@@ -59,32 +71,42 @@ def cadastrarProdutoForm(response):
                 'peso': float(form.cleaned_data['peso']),
                 'quantidade': int(form.cleaned_data['quantidade']),
                 'frete': form.cleaned_data['frete'],
-                'preco': float(form.cleaned_data['preco'])
+                'preco': float(form.cleaned_data['preco']),
             }
             files = {
                 'imagem': ('imagem.jpg', imagem.file, 'image/jpeg')  # Example filename and content type
             }
             headers = {'Authorization': f'Bearer {access}'}
             
-            print("Data to send:", data)  # Debug print
+            # Debug prints
+            print("Data to send:", data)
             
             url = 'http://127.0.0.1:8081/api/produto/'
-            """for handling images, it will have to go like this, the data in request must be raw, the headers must be empty on content, and the imagefile will be on the beggining"""
-            request = requests.post(url=url, data=data,headers=headers,files=files)
+            try:
+                request = requests.post(url=url, data=data, headers=headers, files=files)
+                request.raise_for_status()  # Raises an error for HTTP codes 4xx/5xx
+                
+                if request.status_code == 201:
+                    return render(response, 'sucesso.html')
+                else:
+                    print("Unexpected status code:", request.status_code)
+                    return HttpResponse('<h1>Erro no envio para a API</h1>', status=request.status_code)
             
-            print("Response status code:", request.status_code)
-            if request.status_code == 201:
-                return render(response,'sucesso.html')
-            else:
-                print(request.text, request.status_code)
-                return HttpResponse('<h1>erro no envio para a API</h1>')
+            except requests.exceptions.HTTPError as e:
+                print("HTTPError:", e)
+                return HttpResponse('<h1>Erro de HTTP na comunicação com a API</h1>', status=request.status_code)
+            except requests.exceptions.RequestException as e:
+                print("RequestException:", e)
+                return HttpResponse('<h1>Erro de comunicação com a API</h1>', status=500)
+        
         else:
             # Handle invalid form case
-            return render(response, 'cadastroProdutos.html', {'form': form, 'error': 'Form data is invalid'})
+            return render(response, 'cadastroProdutos.html', {'form': form, 'error': 'Formulário inválido. Verifique os dados e tente novamente.'})
+    
     else:
-        return HttpResponse("invalid request Method",status=405)
-
-
+        return HttpResponse("<h1>Método de solicitação inválido</h1>", status=405)
+    
+    
 def quemSomos(response):
     return render(response,'quemSomos.html')
 
