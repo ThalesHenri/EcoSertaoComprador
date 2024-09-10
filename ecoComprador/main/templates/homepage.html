@@ -1,15 +1,11 @@
 {% extends "index.html" %}
 
  {% block pageTitle %}EcoSertão{% endblock  %}
- {% block contentTitle%}Inicio{% endblock %}
+ {% block contentTitle%}{% endblock %}
  {% block content %}
-    <h1> Vamos começar escolhendo o tipo de usuário.</h1>
-    <ul class="userSelect">
-        <a href="{% url 'cadastrarFornecedor' %}"><li><h2>Fornecedor</h2></li></a>
-        <a href="{% url 'cadastrarComprador' %}"><li><h2>Comprador</h2></li></a>
-        <li><h2><a href="{% url 'login' %}">Clique aqui</a> se ja tiver conta para realizar o login.</h2></li>
-    </ul>
-    
-
+   <div class="homeMsg">
+      <h2> As melhores oportunidades de alimento perto de você.</h2>
+      <a href="{% url 'login' %}"><div class="newBuyButton" style="margin-left:35%;">Comece Agora</div></a>
+   </div>
  {% endblock%}
  

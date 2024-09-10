@@ -1,15 +1,19 @@
+:root{
+    --primeiraTela:#ecf8e5;
+    --btnAcao:#53c57e;
+    --btnAcaoFontHover:#1E2A5E;
+    --boxeCompraAlimentos:#f7fdf3;
+    --boxVendeAlimentos:#ecf8e5;
+}
+
+
 body {
     margin: 0;
     font-family: "Inconsolata", monospace;
     background-color: #f0f0f0;
     color: #333;
 }
-nav {
-    height: 50px;
-    padding: 10px;
-    background-color: #333;
-    color: white;
-}
+
 nav ul {
     display: flex;
     justify-content: space-around;
@@ -19,7 +23,7 @@ nav ul {
     padding: 0;
 }
 nav ul a {
-    color: white;
+    color: black;
     text-decoration: none;
     font-size: 1.2rem;
     transition: all 0.3s ease;
@@ -29,11 +33,14 @@ nav ul a:hover {
     background-color: #555;
     border-radius: 5px;
 }
+.logo{
+    height: 50px;
+}
 .contentContainer {
     margin-top: 20px;
-    background-color: #fff;
+    /*background-color: #fff;*/
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /*box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);*/
     padding: 20px;
     max-width: 800px;
     margin: 20px auto;
@@ -177,4 +184,42 @@ nav ul a:hover {
     .product-list li {
         font-size: 16px;
     }
+}
+
+
+
+
+
+
+/* Alterações de CSS com alisson, 
+apagando esta seção e removendo os comentarios do index
+e alguns do css site volta ao que era */
+.bannerBg{
+    background-color: var(--primeiraTela);
+    height: 600px;
+}
+
+.newBuyButton{
+    background-color: var(--btnAcao);
+    width: fit-content;
+    padding: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
+    border-radius: 20px;
+}
+
+.homeMsg h2{
+    font-size: 3.6rem;
+   
+    text-align: jusi;
+}
+.homeMsg a{
+    text-decoration: none;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+.newBuyButton:hover{
+    color:var(--btnAcaoFontHover) ;
+    transition: 0.5s;
 }
