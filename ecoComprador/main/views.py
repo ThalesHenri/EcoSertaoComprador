@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 import requests, json
-from .forms import ProdutoForm,LoginForm,FornecedorForm,CompradorForm
+from .forms import ProdutoForm,LoginForm,UsuarioForm
 #from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse,JsonResponse
 from urllib.parse import urlencode
@@ -24,7 +24,7 @@ def mostrarProdutos(response):
     headers = {'Authorization': f'Bearer {access}'}
     
     try:
-        resposta = requests.get(url='http://127.0.0.1:8081/api/produto/', headers=headers)
+        resposta = requests.get(url='http://192.168.0.10:8081/api/produto/', headers=headers)
         resposta.raise_for_status()  # Raise an HTTPError if the HTTP request returned an unsuccessful status code
         produtos = resposta.json()
     except requests.exceptions.HTTPError:
@@ -33,7 +33,7 @@ def mostrarProdutos(response):
         # Handle any other exceptions from the requests library
         return render(response, 'erroRequest.html') 
 
-    imageBaseUrl = 'http://127.0.0.1:8081'
+    imageBaseUrl = 'http://192.168.0.10:8081'
     context = {
         'produtos': produtos,
         'is_empty': not produtos,  # Check if the product list is empty
@@ -81,7 +81,7 @@ def cadastrarProdutoForm(response):
             # Debug prints
             print("Data to send:", data)
             
-            url = 'http://127.0.0.1:8081/api/produto/'
+            url = 'http://192.168.0.10:8081/api/produto/'
             try:
                 request = requests.post(url=url, data=data, headers=headers, files=files)
                 request.raise_for_status()  # Raises an error for HTTP codes 4xx/5xx
@@ -123,7 +123,7 @@ def loginEvent(request):
     if request.method == 'POST':
         cnpj = request.POST['cnpj']
         password = request.POST['password']
-        response = requests.post('http://127.0.0.1:8081/api/token/', data={'cnpj': cnpj, 'password': password})
+        response = requests.post('http://192.168.0.10:8081/api/token/', data={'cnpj': cnpj, 'password': password})
         
         if response.status_code == 200:
             tokens = response.json()
@@ -144,7 +144,7 @@ def logout(request):
     if not refresh_token:
         return redirect('login')
 
-    API_BASE_URL = 'http://127.0.0.1:8081/api/'
+    API_BASE_URL = 'http://192.168.0.10:8081/api/'
     response = requests.post(
         f'{API_BASE_URL}logout/',
         json={'refresh': refresh_token},  # Send refresh token in the request body
@@ -166,7 +166,7 @@ def dashboard(request):
     if not token:
         return redirect('login')
 
-    api_url = 'http://127.0.0.1:8081/api/protected/userdetail'
+    api_url = 'http://192.168.0.10:8081/api/protected/userdetail'
     headers = {'Authorization': f'Bearer {token}'}
     response = requests.get(api_url, headers=headers)
 
@@ -176,7 +176,7 @@ def dashboard(request):
         return render(request, 'userInfo.html', {'userInfo': user_info})
     elif response.status_code == 401 and refresh_token:
         # Token expired, attempt to refresh
-        refresh_response = requests.post('http://127.0.0.1:8081/api/token/refresh/', data={'refresh': refresh_token})
+        refresh_response = requests.post('http://192.168.0.10:8081/api/token/refresh/', data={'refresh': refresh_token})
 
         if refresh_response.status_code == 200:
             new_tokens = refresh_response.json()
@@ -198,17 +198,17 @@ def dashboard(request):
     else:
         return JsonResponse({'error': 'Failed to retrieve user info'}, status=400)
 
-def cadastrarFornecedor(response):
-    form = FornecedorForm()
+def cadastrarUsuario(response):
+    form = UsuarioForm()
     context ={
         'form':form
     }
-    return render(response,'cadastrarFornecedor.html',context)
+    return render(response,'cadastrarUsuario.html',context)
 
 
-def cadastrarFornecedorForm(response):
+def cadastrarUsuarioForm(response):
     if response.method == 'POST':
-        form = FornecedorForm(response.POST)
+        form = UsuarioForm(response.POST)
         if form.is_valid():
             
             nome = form.cleaned_data['nome']
@@ -227,7 +227,7 @@ def cadastrarFornecedorForm(response):
             }
             
             headers={}
-            url = 'http://127.0.0.1:8081/api/fornecedores/'
+            url = 'http://192.168.0.10:8081/api/usuario/'
             request = requests.post(data=data,headers=headers,url=url)
             print("Response status code:", request.status_code)
             if request.status_code == 201:
@@ -237,50 +237,10 @@ def cadastrarFornecedorForm(response):
                 return HttpResponse('<h1>erro no envio para a API</h1>')
         else:
             # Handle invalid form case
-            return render(response, 'cadastrarFornecedor.html', {'form': form, 'error': 'Form data is invalid'})
+            return render(response, 'cadastrarUsuario.html', {'form': form, 'error': 'Form data is invalid'})
     else:
         return HttpResponse("invalid request Method",status=405)
                 
 
-def cadastrarComprador(response):
-    form = CompradorForm()
-    context ={
-        'form':form
-    }
-    return render(response,'cadastrarComprador.html',context)
 
 
-def cadastrarCompradorForm(response):
-    if response.method == 'POST':
-        form = CompradorForm(response.POST)
-        if form.is_valid():
-            
-            nome = form.cleaned_data['nome']
-            cnpj = form.cleaned_data['cnpj']
-            responsavel = form.cleaned_data['responsavel']
-            cpfResponsavel = form.cleaned_data['cpfResponsavel']
-            password = form.cleaned_data['password']
-            
-            
-            data = {
-                'nome':nome,
-                'cnpj':cnpj,
-                'responsavel':responsavel,
-                'cpfResponsavel':cpfResponsavel,
-                'password':password
-            }
-            
-            headers={}
-            url = 'http://127.0.0.1:8081/api/compradores/'
-            request = requests.post(data=data,headers=headers,url=url)
-            print("Response status code:", request.status_code)
-            if request.status_code == 201:
-                return render(response,'sucesso.html')
-            else:
-                print(request.text, request.status_code)
-                return HttpResponse('<h1>erro no envio para a API</h1>')
-        else:
-            # Handle invalid form case
-            return render(response, 'cadastrarFornecedor.html', {'form': form, 'error': 'Form data is invalid'})
-    else:
-        return HttpResponse("invalid request Method",status=405)

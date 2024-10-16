@@ -1,4 +1,5 @@
 {% extends "index.html" %}
+{% load static %}
 
  {% block pageTitle %}EcoSertão{% endblock  %}
  {% block contentTitle%}Quem Somos{% endblock %}
@@ -28,4 +29,26 @@
  <p>Se você tiver alguma dúvida, sugestão ou quiser saber mais sobre como pode se envolver, não hesite em nos contatar. Estamos aqui para ajudar e ouvir você.</p>
  
  <p>Na EcoSertão, cada compra é um passo rumo a um planeta mais saudável e consciente. Obrigado por escolher a sustentabilidade. Obrigado por escolher a EcoSertão.</p>
+ <div class="teamContainer">
+    <div class="teamCard">
+        <img src="{% static 'images/th.png' %}" alt="Foto de Integrante 1" class="teamPhoto">
+        <h3>Thales Henrique</h3>
+        <p>Especialista em Desenvolvimento Backend, com vasta experiência em Python e Django, João garante que nossas aplicações são robustas e escaláveis.</p>
+    </div>
+    <div class="teamCard">
+        <img src="{% static 'images/nano.png' %}" alt="Foto de Integrante 2" class="teamPhoto">
+        <h3>Nano Santos</h3>
+        <p>Desenvolvedora Frontend, Ana é apaixonada por design responsivo e garante que todas as nossas interfaces sejam intuitivas e acessíveis.</p>
+    </div>
+    <div class="teamCard">
+        <img src="#" alt="Foto de Integrante 3" class="teamPhoto">
+        <h3>Lucas Ferreira</h3>
+        <p>Especialista em DevOps, Lucas gerencia a infraestrutura e a automação, mantendo o sistema estável e pronto para crescer de acordo com as necessidades dos clientes.</p>
+    </div>
+    <div class="teamCard">
+        <img src="#" alt="Foto de Integrante 4" class="teamPhoto">
+        <h3>Maria Oliveira</h3>
+        <p>Engenheira de Dados, Maria é responsável por otimizar o fluxo de dados e transformar informações em insights valiosos para a empresa.</p>
+    </div>
+</div>
  {% endblock %}

@@ -8,14 +8,13 @@ urlpatterns = [
     path('mostrarProdutos/',views.mostrarProdutos,name='mostrarProdutos'),
     path('cadastrarProduto/',views.cadastrarProduto,name='cadastrarProduto'),
     path('cadastrarProduto/sendForm/',views.cadastrarProdutoForm, name='cadastrarProdutoForm'),
-    path('cadastrarFornecedor/',views.cadastrarFornecedor,name='cadastrarFornecedor'),
-    path('cadastrarFornecedor/sendForm/',views.cadastrarFornecedorForm,name='cadastrarFornecedorForm'),
-    path('cadastrarComprador/',views.cadastrarComprador,name='cadastrarComprador'),
-    path('cadastrarComprador/sendForm/',views.cadastrarCompradorForm,name='cadastrarCompradorForm'),
+    path('cadastrarUsuario/',views.cadastrarUsuario,name='cadastrarUsuario'),
+    path('cadastrarUsuario/sendForm/',views.cadastrarUsuarioForm,name='cadastrarUsuarioForm'),
     path('quemSomos/',views.quemSomos,name='quemSomos'),
     path('login/',views.login,name='login'),
     path('login/event/',views.loginEvent,name='loginEvent'),
     path('logout/',views.logout,name='logout'),
-    path('dashboard/',views.dashboard,name='dashboard'), 
+    path('dashboard/',views.dashboard,name='dashboard'),
+    
     
 ]
